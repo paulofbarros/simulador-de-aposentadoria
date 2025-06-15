@@ -8,18 +8,18 @@
       font-family: Arial, sans-serif;
       background-color: #f4f4f4;
       margin: 0;
-      padding: 0;
+      padding: 20px;
+      text-align: center;
     }
     .container {
       max-width: 600px;
-      margin: 50px auto;
+      margin: auto;
       background: white;
       padding: 20px;
       border-radius: 10px;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     }
-    h2 {
-      text-align: center;
+    h1 {
       color: #333;
     }
     label {
@@ -38,8 +38,8 @@
     button {
       display: block;
       width: 100%;
+      margin-top: 15px;
       padding: 10px;
-      margin-top: 20px;
       background-color: #007BFF;
       color: white;
       border: none;
@@ -49,64 +49,52 @@
     button:hover {
       background-color: #0056b3;
     }
-    .resultado {
-      margin-top: 30px;
-      padding: 20px;
-      background-color: #e9ecef;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    }
-    .resultado p {
-      margin: 5px 0;
-      font-size: 16px;
+    #resultado {
+      margin-top: 20px;
+      font-size: 18px;
       color: #333;
-    }
-    .resultado strong {
-      color: #007BFF;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h2>Simulador de Aposentadoria</h2>
-    <form>
-      <label>Renda Mensal Desejada:</label>
-      <input type="number" id="rendaMensal" placeholder="Ex: 5000">
+    <h1>Simulador de Aposentadoria</h1>
 
-      <label>Anos até a Aposentadoria:</label>
-      <input type="number" id="anosAposentadoria" placeholder="Ex: 30">
+    <label for="rendaMensal">Renda Mensal Desejada:</label>
+    <input type="number" id="rendaMensal" placeholder="Ex: 5000">
 
-      <label>Taxa de Retorno Anual (%):</label>
-      <input type="number" id="taxaRetorno" placeholder="Ex: 6">
+    <label for="anosAposentadoria">Anos até a Aposentadoria:</label>
+    <input type="number" id="anosAposentadoria" placeholder="Ex: 30">
 
-      <button onclick="calcularAposentadoria()">Calcular</button>
-    </form>
+    <label for="taxaRetorno">Taxa de Retorno Anual (%):</label>
+    <input type="number" id="taxaRetorno" placeholder="Ex: 6">
 
-    <div class="resultado" id="resultado"></div>
+    <button onclick="calcular()">Calcular</button>
+
+    <div id="resultado"></div>
   </div>
 
   <script>
-    function calcularAposentadoria() {
-      const renda = parseFloat(document.getElementById('rendaMensal').value);
-      const anos = parseFloat(document.getElementById('anosAposentadoria').value);
-      const taxa = parseFloat(document.getElementById('taxaRetorno').value) / 100;
+    function calcular() {
+      const rendaMensal = parseFloat(document.getElementById("rendaMensal").value);
+      const anosAposentadoria = parseFloat(document.getElementById("anosAposentadoria").value);
+      const taxaRetorno = parseFloat(document.getElementById("taxaRetorno").value);
 
-      if (!renda || !anos || !taxa) {
+      if (!rendaMensal || !anosAposentadoria || !taxaRetorno) {
         alert("Preencha todos os campos.");
         return;
       }
 
-      // Valor necessário para gerar renda passiva mensal
-      const valorNecessario = renda * 12 / taxa;
+      // Cálculo do valor total necessário
+      const taxaMensal = taxaRetorno / 100 / 12; // Taxa mensal
+      const mesesAposentadoria = anosAposentadoria * 12;
+      const valorTotalNecessario = (rendaMensal * 12) / Math.pow(1 + taxaMensal, mesesAposentadoria);
 
-      // Valor mensal a poupar
-      const meses = anos * 12;
-      const valorMensal = valorNecessario * (taxa / 12) / (1 - Math.pow(1 + taxa / 12, -meses));
-
-      document.getElementById('resultado').innerHTML = `
-        <h3>Resultado:</h3>
-        <p><strong>Valor total necessário:</strong> R$ ${valorNecessario.toFixed(2)}</p>
-        <p><strong>Poupança mensal necessária:</strong> R$ ${valorMensal.toFixed(2)}</p>
+      // Exibir resultado
+      const resultadoDiv = document.getElementById("resultado");
+      resultadoDiv.innerHTML = `
+        <p><strong>Valor Total Necessário:</strong> R$ ${valorTotalNecessario.toFixed(2)}</p>
+        <p><strong>Aporte Mensal Recomendado:</strong> R$ ${(valorTotalNecessario / mesesAposentadoria).toFixed(2)}</p>
       `;
     }
   </script>
